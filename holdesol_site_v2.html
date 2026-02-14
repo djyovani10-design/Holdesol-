@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOLDESOL Corporation | HSL - Settlement Layer Programável</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --solana-purple: #9945FF;
+            --solana-green: #14F195;
+            --deep-space: #0A0A0F;
+            --cosmic-blue: #1A1A2E;
+            --stellar-gray: #16213E;
+            --nebula-white: #E8E8E8;
+            --aurora-glow: rgba(153, 69, 255, 0.3);
+            --matrix-green: rgba(20, 241, 149, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--deep-space);
+            color: var(--nebula-white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+        }
+
+        /* Background Animation */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(153, 69, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(153, 69, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .bg-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--aurora-glow) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            pointer-events: none;
+            z-index: -1;
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        .bg-glow-2 {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--matrix-green) 0%, transparent 70%);
+            bottom: -100px;
+            left: -100px;
+            pointer-events: none;
+            z-index: -1;
+            animation: pulse 6s ease-in-out infinite reverse;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(153, 69, 255, 0.1);
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--solana-purple), var(--solana-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: rgba(232, 232, 232, 0.75);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--solana-purple), var(--solana-green));
+            transition: width 0.25s ease, opacity 0.25s ease;
+            opacity: 0;
+        }
+
+        .nav-links a:hover {
+            color: var(--solana-green);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+            opacity: 1;
+        }
+
+        .nav-links a.active {
+            color: #fff;
+            text-shadow: 0 0 12px rgba(20, 241, 149, 0.25);
+        }
+
+        .nav-links a.active::after {
+            width: 100%;
+            opacity: 1;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        /* Mobile menu */
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+            position: absolute;
+            top: 80px;
+            right: 5%;
+            background: rgba(10, 10, 15, 0.95);
+            border: 1px solid rgba(153, 69, 255, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            width: 240px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .mobile-menu a {
+            color: rgba(232, 232, 232, 0.8);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.6rem 0.75rem;
+            border-radius: 10px;
+            transition: all 0.25s ease;
+        }
+
+        .mobile-menu a:hover {
+            background: rgba(153, 69, 255, 0.12);
+            color: #fff;
+        }
+
+        .mobile-menu a.active {
+            background: rgba(20, 241, 149, 0.12);
+            color: #fff;
+        }
+
+        .mobile-menu.show {
+            display: flex;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 1;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(153, 69, 255, 0.1);
+            border: 1px solid rgba(153, 69, 255, 0.3);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--solana-purple);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--solana-purple), var(--solana-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: rgba(232, 232, 232, 0.7);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 3rem;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+
+        .stat {
+            text-align: left;
+        }
+
+        .stat-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--solana-green), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: rgba(232, 232, 232, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Abstract Visual */
+        .hero-visual {
+            position: absolute;
+            right: -10%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 600px;
+            height: 600px;
+            opacity: 0.6;
+        }
+
+        .orbital-ring {
+            position: absolute;
+            border: 1px solid rgba(153, 69, 255, 0.2);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+
+        .orbital-ring:nth-child(1) {
+            width: 100%;
+            height: 100%;
+            animation-duration: 30s;
+        }
+
+        .orbital-ring:nth-child(2) {
+            width: 70%;
+            height: 70%;
+            top: 15%;
+            left: 15%;
+            animation-duration: 20s;
+            animation-direction: reverse;
+            border-color: rgba(20, 241, 149, 0.2);
+        }
+
+        .orbital-ring:nth-child(3) {
+            width: 40%;
+            height: 40%;
+            top: 30%;
+            left: 30%;
+            animation-duration: 15s;
+            border-color: rgba(153, 69, 255, 0.4);
+        }
+
+        .core {
+            position: absolute;
+            width: 15%;
+            height: 15%;
+            top: 42.5%;
+            left: 42.5%;
+            background: radial-gradient(circle, var(--solana-purple), var(--solana-green));
+            border-radius: 50%;
+            box-shadow: 0 0 60px var(--solana-purple);
+            animation: pulse-core 3s ease-in-out infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse-core {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* Sections General */
+        section {
+            padding: 6rem 5%;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: rgba(232, 232, 232, 0.6);
+            font-size: 1.1rem;
+        }
+
+        /* Features Grid */
+        .features {
+            background: linear-gradient(180deg, transparent, rgba(153, 69, 255, 0.05), transparent);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: rgba(26, 26, 46, 0.6);
+            border: 1px solid rgba(153, 69, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--solana-purple), var(--solana-green));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(153, 69, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(153, 69, 255, 0.1);
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(153, 69, 255, 0.2), rgba(20, 241, 149, 0.2));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: #fff;
+        }
+
+        .feature-card p {
+            color: rgba(232, 232, 232, 0.6);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Architecture Section */
+        .architecture {
+            background: var(--cosmic-blue);
+        }
+
+        .arch-flow {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .arch-step {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            padding: 1.5rem;
+            background: rgba(10, 10, 15, 0.5);
+            border-radius: 12px;
+            border-left: 3px solid var(--solana-purple);
+            transition: all 0.3s ease;
+        }
+
+        .arch-step:hover {
+            background: rgba(153, 69, 255, 0.1);
+            transform: translateX(10px);
+        }
+
+        .step-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--solana-purple);
+            min-width: 40px;
+        }
+
+        .step-content h4 {
+            margin-bottom: 0.25rem;
+            color: #fff;
+        }
+
+        .step-content p {
+            color: rgba(232, 232, 232, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .arch-arrow {
+            text-align: center;
+            color: var(--solana-green);
+            font-size: 1.5rem;
+            opacity: 0.5;
+        }
+
+        /* Tokenomics Section */
+        .tokenomics {
+            position: relative;
+        }
+
+        .token-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            max-width: 1200px;
+            margin:  0 auto;
+            align-items: center;
+        }
+
+        .token-info h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--solana-purple), var(--solana-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .token-info p {
+            color: rgba(232, 232, 232, 0.7);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .token-benefits {
+            list-style: none;
+        }
+
+        .token-benefits li {
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(153, 69, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .token-benefits li::before {
+            content: '→';
+            color: var(--solana-green);
+            font-weight: bold;
+        }
+
+        .token-visual {
+            position: relative;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .token-circle {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(153, 69, 255, 0.2), rgba(20, 241, 149, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .token-inner {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--solana-purple), var(--solana-green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: 0 0 80px rgba(153, 69, 255, 0.5);
+        }
+
+        .orbit-particle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--solana-green);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--solana-green);
+        }
+
+        .orbit-particle.p1 {
+            animation: orbit 8s linear infinite;
+        }
+
+        .orbit-particle.p2 {
+            animation: orbit 12s linear infinite reverse;
+            width: 15px;
+            height: 15px;
+            background: var(--solana-purple);
+        }
+
+        @keyframes orbit {
+            from { transform: rotate(0deg) translateX(150px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
+        }
+
+        /* Why Solana Section */
+        .why-solana {
+            background: linear-gradient(180deg, var(--deep-space), var(--cosmic-blue));
+            text-align: center;
+        }
+
+        .solana-features {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 3rem auto;
+        }
+
+        .solana-item {
+            padding: 2rem;
+            background: rgba(153, 69, 255, 0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(153, 69, 255, 0.1);
+        }
+
+        .solana-item h4 {
+            color: var(--solana-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .solana-item p {
+            font-size: 0.9rem;
+            color: rgba(232, 232, 232, 0.6);
+        }
+
+        /* CTA Section */
+        .cta {
+            text-align: center;
+            padding: 8rem 5%;
+            background: radial-gradient(ellipse at center, rgba(153, 69, 255, 0.15), transparent 70%);
+        }
+
+        .cta h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .cta p {
+            color: rgba(232, 232, 232, 0.6);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--solana-purple), var(--solana-green));
+            color: #fff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(153, 69, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #fff;
+            border: 1px solid rgba(153, 69, 255, 0.5);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(153, 69, 255, 0.1);
+            border-color: var(--solana-purple);
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 5%;
+            border-top: 1px solid rgba(153, 69, 255, 0.1);
+            text-align: center;
+            color: rgba(232, 232, 232, 0.4);
+            font-size: 0.875rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .confidential-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 4px;
+            color: #ff6b6b;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .hero-visual {
+                display: none;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .token-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .solana-features {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .arch-step {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Scroll Animation */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .scroll-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
+    <nav>
+        <div class="logo">HOLDESOL</div>
+
+        <ul class="nav-links">
+            <li><a href="#arquitetura">Arquitetura</a></li>
+            <li><a href="#tecnologia">Tecnologia</a></li>
+            <li><a href="#tokenomics">HSL Token</a></li>
+            <li><a href="#solana">Por que Solana</a></li>
+            <li><a href="#contato">Contato</a></li>
+        </ul>
+
+        <button class="menu-toggle" id="menuToggle">☰</button>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="#arquitetura">Arquitetura</a>
+            <a href="#tecnologia">Tecnologia</a>
+            <a href="#tokenomics">HSL Token</a>
+            <a href="#solana">Por que Solana</a>
+            <a href="#contato">Contato</a>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="badge">Settlement Layer Programável</div>
+            <h1>Infraestrutura de Liquidação <span>On-Chain</span> para o Futuro</h1>
+            <p class="hero-subtitle">
+                HOLDESOL Corporation desenvolve um Settlement Layer programável, modular e auditável,
+                construído sobre Solana para atender demandas institucionais, DeFi e sistemas híbridos.
+            </p>
+
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-number">400ms</div>
+                    <div class="stat-label">Finalidade</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Uptime Alvo</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">HSL</div>
+                    <div class="stat-label">Token Utilitário</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="orbital-ring"></div>
+            <div class="orbital-ring"></div>
+            <div class="orbital-ring"></div>
+            <div class="core"></div>
+        </div>
+    </section>
+
+    <section class="features scroll-reveal" id="tecnologia">
+        <div class="section-header">
+            <h2>Tecnologia Modular e Escalável</h2>
+            <p>Um ecossistema programável para liquidação, integração e interoperabilidade em escala global.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Settlement em Alta Velocidade</h3>
+                <p>Liquidação programável com foco em baixa latência e alta capacidade, suportando múltiplos fluxos financeiros.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Arquitetura Auditável</h3>
+                <p>Estrutura preparada para auditorias externas, compliance e validação de integridade em contratos e módulos.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🌐</div>
+                <h3>Integração Cross-Chain</h3>
+                <p>Camadas de conectividade para pontes e swaps, com suporte a integração futura com redes EVM e soluções híbridas.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="architecture scroll-reveal" id="arquitetura">
+        <div class="section-header">
+            <h2>Arquitetura Operacional</h2>
+            <p>Fluxo claro, modular e replicável para liquidação, custódia e execução automatizada.</p>
+        </div>
+
+        <div class="arch-flow">
+            <div class="arch-step">
+                <div class="step-number">01</div>
+                <div class="step-content">
+                    <h4>Entrada de Liquidez</h4>
+                    <p>Usuários e entidades depositam ativos via pools ou integrações institucionais.</p>
+                </div>
+            </div>
+
+            <div class="arch-arrow">↓</div>
+
+            <div class="arch-step">
+                <div class="step-number">02</div>
+                <div class="step-content">
+                    <h4>Settlement Layer</h4>
+                    <p>Execução automatizada via smart contracts com regras programáveis e validação on-chain.</p>
+                </div>
+            </div>
+
+            <div class="arch-arrow">↓</div>
+
+            <div class="arch-step">
+                <div class="step-number">03</div>
+                <div class="step-content">
+                    <h4>Distribuição e Saída</h4>
+                    <p>Saídas para holders, staking, swaps e integrações com ecossistemas externos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="tokenomics scroll-reveal" id="tokenomics">
+        <div class="section-header">
+            <h2>Tokenomics HSL</h2>
+            <p>O token utilitário que conecta liquidez, governança e expansão do ecossistema HOLDESOL.</p>
+        </div>
+
+        <div class="token-grid">
+            <div class="token-info">
+                <h3>HSL Token</h3>
+                <p>
+                    O HSL atua como unidade operacional dentro do Settlement Layer, habilitando fluxos de liquidez,
+                    governança e integração com produtos financeiros construídos sobre Solana.
+                </p>
+
+                <ul class="token-benefits">
+                    <li>Incentivo de liquidez e crescimento do ecossistema</li>
+                    <li>Governança e votação de parâmetros operacionais</li>
+                    <li>Staking e recompensas de validação</li>
+                    <li>Integração com swaps e rotas cross-chain</li>
+                </ul>
+            </div>
+
+            <div class="token-visual">
+                <div class="token-circle">
+                    <div class="orbit-particle p1"></div>
+                    <div class="orbit-particle p2"></div>
+                    <div class="token-inner">HSL</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="why-solana scroll-reveal" id="solana">
+        <div class="section-header">
+            <h2>Por que Solana</h2>
+            <p>Base tecnológica com alta performance e custos otimizados para settlement global.</p>
+        </div>
+
+        <div class="solana-features">
+            <div class="solana-item">
+                <h4>Velocidade</h4>
+                <p>Finalidade rápida e baixa latência para aplicações críticas.</p>
+            </div>
+            <div class="solana-item">
+                <h4>Escalabilidade</h4>
+                <p>Alta capacidade de transações sem comprometer a descentralização.</p>
+            </div>
+            <div class="solana-item">
+                <h4>Baixo Custo</h4>
+                <p>Taxas mínimas, viabilizando operações institucionais e microtransações.</p>
+            </div>
+            <div class="solana-item">
+                <h4>Ecossistema</h4>
+                <p>Infraestrutura DeFi madura e integração com novos protocolos.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta scroll-reveal" id="contato">
+        <h2>Pronto para Construir o Futuro?</h2>
+        <p>
+            HOLDESOL Corporation está estruturando uma camada de liquidação programável para o mercado global.
+            Entre em contato e receba acesso ao material institucional.
+        </p>
+
+        <div class="btn-group">
+            <a href="#" class="btn btn-primary">Solicitar Whitepaper</a>
+            <a href="#" class="btn btn-secondary">Apresentação Institucional</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div>© 2026 HOLDESOL Corporation. Todos os direitos reservados.</div>
+            <div class="confidential-badge">CONFIDENCIAL</div>
+        </div>
+        <p style="margin-top: 1rem; font-size: 0.75rem; opacity: 0.6;">
+            Este material é apenas informativo e não constitui oferta de valores mobiliários ou recomendação financeira.
+        </p>
+    </footer>
+
+    <script>
+        // Scroll reveal
+        const reveals = document.querySelectorAll(".scroll-reveal");
+
+        function revealOnScroll() {
+            reveals.forEach(el => {
+                const windowHeight = window.innerHeight;
+                const elementTop = el.getBoundingClientRect().top;
+                const elementVisible = 120;
+
+                if (elementTop < windowHeight - elementVisible) {
+                    el.classList.add("active");
+                }
+            });
+        }
+
+        window.addEventListener("scroll", revealOnScroll);
+        window.addEventListener("load", revealOnScroll);
+
+        // Active menu link
+        const sections = document.querySelectorAll("section[id]");
+        const navLinks = document.querySelectorAll(".nav-links a");
+        const mobileLinks = document.querySelectorAll(".mobile-menu a");
+
+        function setActiveLink() {
+            let current = "";
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 140;
+                const sectionHeight = section.offsetHeight;
+
+                if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                    current = section.getAttribute("id");
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove("active");
+                if (link.getAttribute("href") === `#${current}`) {
+                    link.classList.add("active");
+                }
+            });
+
+            mobileLinks.forEach(link => {
+                link.classList.remove("active");
+                if (link.getAttribute("href") === `#${current}`) {
+                    link.classList.add("active");
+                }
+            });
+        }
+
+        window.addEventListener("scroll", setActiveLink);
+        window.addEventListener("load", setActiveLink);
+
+        // Mobile menu toggle
+        const menuToggle = document.getElementById("menuToggle");
+        const mobileMenu = document.getElementById("mobileMenu");
+
+        menuToggle.addEventListener("click", () => {
+            mobileMenu.classList.toggle("show");
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener("click", () => {
+                mobileMenu.classList.remove("show");
+            });
+        });
+    </script>
+</body>
+</html>
